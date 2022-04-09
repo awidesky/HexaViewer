@@ -2,6 +2,12 @@
 # Created by https://www.toptal.com/developers/gitignore/api/c++
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++
 
+## replit ##
+#git filter-branch --index-filter 'git rm --cached --ignore-unmatch path/to/mylarge_50mb_file' --tag-name-filter cat -- --all
+.ccls-cache/
+.breakpoints
+main
+
 ### C++ ###
 # Prerequisites
 *.d
