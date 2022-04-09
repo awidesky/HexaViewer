@@ -16,8 +16,8 @@ FileReader(std::string path);
 /** Set buffer size to the given parameter */
 FileReader(std::string path, int bufferSize);
 
-/** Read all content of the file and returns it as string. */
-std::string readAll();
+/** Read all content of the file */
+FileReader& readAll();
 /** Read the file once with the buffer(try filling it).
  * return true if there's something left to read, else false.
  */
