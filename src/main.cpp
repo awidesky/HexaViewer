@@ -1,6 +1,5 @@
 #include <FileReader.hpp>
-#include <cmath>
-#include <iomanip>
+
 #include <iostream>
 
 int main(int argc, char *argv[]) {
@@ -12,7 +11,7 @@ int main(int argc, char *argv[]) {
   for (int i = 1; i < argc; i++) {
     std::cout << argv[i] << " :" << std::endl;
     FileReader fr{argv[i]};
-    while (fr.readOnce())
+    while (fr.readOnce() > 0)
       std::cout << fr.pollResult();
 
     std::cout << std::endl;

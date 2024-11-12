@@ -1,5 +1,8 @@
 #include <fstream>
 #include <sstream>
+#include <iomanip>
+
+#include <cmath>
 
 #include <filesystem>
 
@@ -56,7 +59,7 @@ public:
 
   /** Read all content of the file */
   FileReader &readAll() {
-    while (readOnce()) {
+    while (readOnce() > 0) {
     }
 
     return *this;
@@ -66,9 +69,7 @@ public:
    */
   int readOnce() {
     fs.read((char *)buf, length);
-    if (fs.eof())
-      return -1;
-    if (fs) {
+    if (fs.good()) {
       std::streamsize dataSize = fs.gcount();
       // std::cout << "read : " << dataSize << " bytes\n";
 
@@ -81,8 +82,11 @@ public:
         strStream << std::setw(2) << (int)buf[i] << " ";
       }
       return dataSize;
-    } else
+    } else if (fs.eof()) {
+      return 0;
+    } else {
       return -1;
+    }
   }
 
   /** Return the string . */
