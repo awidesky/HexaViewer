@@ -1,17 +1,20 @@
-#include <iostream>
-#include <fstream>
-#include <iomanip>
+#include <FileReader.hpp>
 #include <cmath>
-#include "../include/FileReader.hpp"
+#include <iomanip>
+#include <iostream>
 
+int main(int argc, char *argv[]) {
+  if (argc < 2) {
+    std::cout << "Usage : " << argv[0] << " <filenames>" << std::endl;
+    return 0;
+  }
+  
+  for (int i = 1; i < argc; i++) {
+    std::cout << argv[i] << " :" << std::endl;
+    FileReader fr{argv[i]};
+    while (fr.readOnce())
+      std::cout << fr.pollResult();
 
-int main() {
-
-  std::string filePath = "testBinary/tt.txt";
-
-  FileReader fr{filePath, 10};
-  fr.readOnce(); std::cout << fr.pollResult();
-  fr.readOnce(); std::cout << fr.pollResult();
-  fr.readOnce(); std::cout << fr.pollResult();
-  std::cout << fr.readAll().copyResult() << std::endl;
+    std::cout << std::endl;
+  }
 }
