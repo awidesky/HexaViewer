@@ -2,8 +2,6 @@
 #include <sstream>
 #include <iomanip>
 
-#include <cmath>
-
 #include <filesystem>
 
 /* https://stackoverflow.com/questions/5840148/how-can-i-get-a-files-size-in-c */
@@ -32,7 +30,7 @@ public:
   /** Set buffer size to the length to DEFAULTBUFFERSIZE */
   FileReader(const char *path) : FileReader(path, DEFAULTBUFFERSIZE) {}
   /** Set buffer size to the given parameter */
-  FileReader(const char *path, int bufferSize) : fs(path, std::ifstream::binary), length(bufferSize), rowNumLength(std::round(std::log(getSize(path)) / std::log(12))) {
+  FileReader(const char *path, int bufferSize) : fs(path, std::ifstream::binary), length(bufferSize), rowNumLength((int)(std::log(getSize(path)) / std::log(16)) + 1) {
     if (fs) {
       buf = new unsigned char[length];
 
@@ -68,11 +66,10 @@ public:
    * return number of characters. Or 0 if EOF, else -1 on error.
    */
   int readOnce() {
-    fs.read((char *)buf, length);
-    if (fs.good()) {
-      std::streamsize dataSize = fs.gcount();
+    fs.read((char*)buf, length);
+    std::streamsize dataSize = fs.gcount();
+    if (dataSize != 0) {
       // std::cout << "read : " << dataSize << " bytes\n";
-
       for (int i = 0; i < dataSize; i++, cnt++) {
         if (!(cnt % 16))
           strStream << "\n"

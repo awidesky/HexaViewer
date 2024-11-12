@@ -7,13 +7,16 @@ int main(int argc, char *argv[]) {
     std::cout << "Usage : " << argv[0] << " <filenames>" << std::endl;
     return 0;
   }
-  
+  std::cout << "fileSize : " << getSize(argv[1]) << std::endl;
+
   for (int i = 1; i < argc; i++) {
     std::cout << argv[i] << " :" << std::endl;
     FileReader fr{argv[i]};
-    while (fr.readOnce() > 0)
+    while(fr) {
+      fr.readOnce();
       std::cout << fr.pollResult();
+    }
 
-    std::cout << std::endl;
+    std::cout << std::endl << fr.readOnce() << "asdf\"" << fr.pollResult() << "\"" << std::endl;
   }
 }
