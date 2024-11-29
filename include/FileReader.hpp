@@ -11,7 +11,7 @@ static inline int getSize(const char *path) {
   return std::filesystem::file_size({path});
 }
 
-class FileReader {
+class FileReader { //TODO : Hexaviewer로 바꾸기
 
 private:
   std::ifstream fs;
