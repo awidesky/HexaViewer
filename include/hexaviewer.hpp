@@ -22,7 +22,8 @@ private:
   /** Length of the buffer */
   int length;
   int cnt = 0;
-  int rowNumLength;
+  const int rowNumLength;
+  const bool printRowcount;
   unsigned char* buf;
   std::stringstream strStream;
 
@@ -30,22 +31,23 @@ public:
   static constexpr int DEFAULTBUFFERSIZE = 64 * 1024;
 
   /** Set buffer size to the length to DEFAULTBUFFERSIZE */
-  hexaViewer(std::string path) : hexaViewer(path.c_str(), DEFAULTBUFFERSIZE) {}
-  /** Set buffer size to the length to DEFAULTBUFFERSIZE */
-  hexaViewer(const char* path) : hexaViewer(path, DEFAULTBUFFERSIZE) {}
+  hexaViewer(const std::string& path) : hexaViewer(path.c_str()) {}
   /** Set buffer size to the given parameter */
-  hexaViewer(const char* path, int bufferSize) : fs(path, std::ifstream::binary), length(bufferSize), rowNumLength((int)(std::log(getSize(path)) / std::log(16)) + 1) {
+  hexaViewer(const char* path, bool printRowcount = true, bool printHeader = true, int bufferSize = DEFAULTBUFFERSIZE)
+    : fs(path, std::ifstream::binary), printRowcount(printRowcount), length(bufferSize), rowNumLength((int)(std::log(getSize(path)) / std::log(16)) + 1)
+    {
     if (fs) {
       buf = new unsigned char[length];
 
-      for (int i = 0; i < rowNumLength + 3; i++)
-        strStream << ' ';
+      if (printHeader) {
+        for (int i = 0; i < rowNumLength + 3; i++)
+          strStream << ' ';
 
-      strStream << "01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10\n";
+        strStream << "01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10\n";
 
-      for (int i = 0; i < 50 + rowNumLength; i++)
-        strStream << '-';
-        
+        for (int i = 0; i < 50 + rowNumLength; i++)
+          strStream << '-';
+      }
       strStream << std::hex << std::setfill('0') << std::uppercase;
     }
   }
@@ -73,13 +75,15 @@ public:
     std::streamsize dataSize = fs.gcount();
     if (dataSize != 0) {
       // std::cout << "read : " << dataSize << " bytes\n";
+      strStream << std::setw(2);
       for (int i = 0; i < dataSize; i++, cnt++) {
-        if (!(cnt % 16))
+        if (printRowcount && !(cnt % 16))
           strStream << '\n'
                     << std::setw(rowNumLength)
-                    << cnt << " | ";
+                    << cnt << " | "
+                    << std::setw(2);
 
-        strStream << std::setw(2) << (int)buf[i] << ' ';
+        strStream << (int)buf[i] << ' ';
       }
       return dataSize;
     } else if (fs.eof()) {
